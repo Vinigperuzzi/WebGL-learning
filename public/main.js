@@ -5,4 +5,4 @@ if (!gl) {
     throw new Error('WebGl not superted');
 }
 
-alert(`Everithings's peacy hear with WebGL`)
+alert(`Everythings's peachy hear with WebGL`)
