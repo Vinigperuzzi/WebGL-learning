@@ -151,7 +151,6 @@ function main() {
         gl[i].bindBuffer(gl[i].ARRAY_BUFFER, colorBuffer[i]);
         gl[i].vertexAttribPointer(colorLocation[i], 3, gl[i].FLOAT, false, 0, 0);
     }
-    console.log('Veio até aqui');
     for (let i = 0; i<n; i++){
         gl[i].useProgram(program[i]);
         gl[i].drawArrays(gl[i].TRIANGLES, 0, 12);
