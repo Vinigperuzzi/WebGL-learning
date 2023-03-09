@@ -3,7 +3,8 @@ body {
   margin: 0;
 }
 canvas {
-  width: 100vw;
-  height: 100vh;
+  box-sizing: content-box;
+  width: 800px;
+  height: 800px;
   display: block;
 }
