@@ -9,11 +9,16 @@ in vec2 a_position;
 // Used to pass in the resolution of the canvas
 uniform vec2 u_resolution;
 
+// translation to add to position
+uniform vec2 u_translation;
+
 // all shaders have a main function
 void main() {
+  // Add in the translation
+  vec2 position = a_position + u_translation;
 
   // convert the position from pixels to 0.0 to 1.0
-  vec2 zeroToOne = a_position / u_resolution;
+  vec2 zeroToOne = position / u_resolution;
 
   // convert from 0->1 to 0->2
   vec2 zeroToTwo = zeroToOne * 2.0;
@@ -39,8 +44,8 @@ void main() {
 }
 `;
 
-let move = true;
-let speed = 5;
+let move = 1;
+let speed = 10;
 
 function main() {
   // Get A WebGL context
@@ -61,6 +66,7 @@ function main() {
   // look up uniform locations
   var resolutionUniformLocation = gl.getUniformLocation(program, "u_resolution");
   var colorLocation = gl.getUniformLocation(program, "u_color");
+  var translationLocation = gl.getUniformLocation(program, "u_translation");
 
   // Create a buffer
   var positionBuffer = gl.createBuffer();
@@ -76,6 +82,8 @@ function main() {
 
   // Bind it to ARRAY_BUFFER (think of it as ARRAY_BUFFER = positionBuffer)
   gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
+  // Set Geometry.
+  setGeometry(gl);
 
   // Tell the attribute how to get data out of positionBuffer (ARRAY_BUFFER)
   var size = 2;          // 2 components per iteration
@@ -86,13 +94,9 @@ function main() {
   gl.vertexAttribPointer(
       positionAttributeLocation, size, type, normalize, stride, offset);
 
-
-
   // First let's make some variables
-  // to hold the translation, width and height of the rectangle
+  // to hold the translation,
   var translation = [0, 0];
-  var width = 100;
-  var height = 30;
   var color = [Math.random(), Math.random(), Math.random(), 1];
 
   drawScene();
@@ -108,6 +112,7 @@ function main() {
     };
   }
 
+  // Draw the scene.
   function drawScene() {
     webglUtils.resizeCanvasToDisplaySize(gl.canvas);
 
@@ -128,44 +133,75 @@ function main() {
     // pixels to clipspace in the shader
     gl.uniform2f(resolutionUniformLocation, gl.canvas.width, gl.canvas.height);
 
-    // Update the position buffer with rectangle positions
-    gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
-    setRectangle(gl, translation[0], translation[1], width, height);
-
-    // Set a random color.
+    // Set the color.
     gl.uniform4fv(colorLocation, color);
 
-    // Draw the rectangle.
+    // Set the translation.
+    gl.uniform2fv(translationLocation, translation);
+
+    // Draw the geometry.
     var primitiveType = gl.TRIANGLES;
     var offset = 0;
-    var count = 6;
+    var count = 18;
     gl.drawArrays(primitiveType, offset, count);
 
-    if (translation[0] > 400){
-      translation[0] = -70;
+    if (translation[0] > 300 && translation[1] < 145){
+      move = 0;
+    }
+    if (translation[0] < 0 && translation[1] < 0){
+      move = 1;
+    }
+    if (translation[0] < 0 && translation[1] > 145){
+      move = 3;
+    }
+    if (translation[0] > 300 && translation[1] > 145){
+      move = 2;
+    }
+    if (move == 0){
+      translation[1] += speed;
+    } else if (move == 1){
+      translation[0] += speed;
+    } else if (move == 2){
+      translation[0] -= speed;
+    } else{
+      translation[1] -= speed;
     }
 
-    translation[0] += speed;
-    
     requestAnimationFrame(drawScene);
-
   }
 }
 
-// Fill the buffer with the values that define a rectangle.
-function setRectangle(gl, x, y, width, height) {
-  var x1 = x;
-  var x2 = x + width;
-  var y1 = y;
-  var y2 = y + height;
-  gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([
-     x1, y1,
-     x2, y1,
-     x1, y2,
-     x1, y2,
-     x2, y1,
-     x2, y2,
-  ]), gl.STATIC_DRAW);
+// Fill the current ARRAY_BUFFER buffer
+// with the values that define a letter 'F'.
+function setGeometry(gl) {
+  gl.bufferData(
+      gl.ARRAY_BUFFER,
+      new Float32Array([
+          // left column
+          0, 0,
+          30, 0,
+          0, 150,
+          0, 150,
+          30, 0,
+          30, 150,
+
+          // top rung
+          30, 0,
+          100, 0,
+          30, 30,
+          30, 30,
+          100, 0,
+          100, 30,
+
+          // middle rung
+          30, 60,
+          67, 60,
+          30, 90,
+          30, 90,
+          67, 60,
+          67, 90,
+      ]),
+      gl.STATIC_DRAW);
 }
 
 main();
