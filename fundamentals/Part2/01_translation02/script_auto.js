@@ -40,7 +40,7 @@ void main() {
 `;
 
 let move = true;
-let speed = 1;
+let speed = 5;
 
 function main() {
   // Get A WebGL context
@@ -141,23 +141,12 @@ function main() {
     var count = 6;
     gl.drawArrays(primitiveType, offset, count);
 
-    if (translation[0] > 300){
-      move = true;
+    if (translation[0] > 400){
+      translation[0] = -70;
     }
-    if (translation[0] < 0){
-      move = false;
-    }
-    if (move){
-      if (speed > 5){
-        speed--;
-      }
-      translation[0] -= speed;// esse valor pode ser setado para o speed
-    } else {
-      if (speed < 150){
-        speed++;
-      }
-      translation[0] += speed;
-    }
+
+    translation[0] += speed;
+    
     requestAnimationFrame(drawScene);
 
   }
