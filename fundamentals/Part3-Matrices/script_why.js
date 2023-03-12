@@ -198,21 +198,24 @@ function main() {
     var rotationMatrix = m3.rotation(rotationInRadians);
     var scaleMatrix = m3.scaling(scale[0], scale[1]);
 
+    // Starting Matrix.
     var matrix = m3.identity();
-    // Multiply the matrices.
+
+    for (var i = 0; i < 5; ++i) {
+      // Multiply the matrices.
       matrix = m3.multiply(matrix, translationMatrix);
       matrix = m3.multiply(matrix, rotationMatrix);
       matrix = m3.multiply(matrix, scaleMatrix);
-      
+
       // Set the matrix.
       gl.uniformMatrix3fv(matrixLocation, false, matrix);
 
-    // Draw the geometry.
-    var primitiveType = gl.TRIANGLES;
-    var offset = 0;
-    var count = 18;
-    gl.drawArrays(primitiveType, offset, count);
-    
+      // Draw the geometry.
+      var primitiveType = gl.TRIANGLES;
+      var offset = 0;
+      var count = 18;
+      gl.drawArrays(primitiveType, offset, count);
+    }
 
     // if (mutex){
     //   if (translation[0] > 500 && translation[1] < 245){
@@ -259,7 +262,8 @@ function main() {
     //   }
 
     //   requestAnimationFrame(drawScene);
-    // }
+    //}
+    //mutex = true;
 
   }
 }
