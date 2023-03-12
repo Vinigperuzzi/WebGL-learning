@@ -198,11 +198,26 @@ function main() {
     var rotationMatrix = m3.rotation(rotationInRadians);
     var scaleMatrix = m3.scaling(scale[0], scale[1]);
 
-    var matrix = m3.identity();
+    var moveOriginMatrix = m3.translation(-50, -75);
     // Multiply the matrices.
-      matrix = m3.multiply(matrix, translationMatrix);
-      matrix = m3.multiply(matrix, rotationMatrix);
+      var matrix = m3.multiply(translationMatrix, rotationMatrix);
       matrix = m3.multiply(matrix, scaleMatrix);
+      matrix = m3.multiply(matrix, moveOriginMatrix);
+      
+      // Set the matrix.
+      gl.uniformMatrix3fv(matrixLocation, false, matrix);
+
+    // Draw the geometry.
+    var primitiveType = gl.TRIANGLES;
+    var offset = 0;
+    var count = 18;
+    gl.drawArrays(primitiveType, offset, count);
+
+    moveOriginMatrix = m3.translation(20, 75);
+    // Multiply the matrices.
+      var matrix = m3.multiply(translationMatrix, rotationMatrix);
+      matrix = m3.multiply(matrix, scaleMatrix);
+      matrix = m3.multiply(matrix, moveOriginMatrix);
       
       // Set the matrix.
       gl.uniformMatrix3fv(matrixLocation, false, matrix);
@@ -214,52 +229,52 @@ function main() {
     gl.drawArrays(primitiveType, offset, count);
     
 
-    // if (mutex){
-    //   if (translation[0] > 500 && translation[1] < 245){
-    //     move = 0;
-    //   }
-    //   if (translation[0] < 50 && translation[1] < 80){
-    //     move = 1;
-    //   }
-    //   if (translation[0] < 50 && translation[1] > 245){
-    //     move = 3;
-    //   }
-    //   if (translation[0] > 500 && translation[1] > 245){
-    //     move = 2;
-    //   }
-    //   if (move == 0){
-    //     translation[1] += speed;
-    //   } else if (move == 1){
-    //     translation[0] += speed;
-    //   } else if (move == 2){
-    //     translation[0] -= speed;
-    //   } else{
-    //     translation[1] -= speed;
-    //   }
+    if (mutex){
+      if (translation[0] > 500 && translation[1] < 245){
+        move = 0;
+      }
+      if (translation[0] < 50 && translation[1] < 80){
+        move = 1;
+      }
+      if (translation[0] < 50 && translation[1] > 245){
+        move = 3;
+      }
+      if (translation[0] > 500 && translation[1] > 245){
+        move = 2;
+      }
+      if (move == 0){
+        translation[1] += speed;
+      } else if (move == 1){
+        translation[0] += speed;
+      } else if (move == 2){
+        translation[0] -= speed;
+      } else{
+        translation[1] -= speed;
+      }
 
-    //   angleInDegrees -= speed;
-    //   rotationInRadians = angleInDegrees * Math.PI / 180;
-    //   if (angleInDegrees >= 360){
-    //     angleInDegrees = 0;
-    //   }
+      angleInDegrees -= speed;
+      rotationInRadians = angleInDegrees * Math.PI / 180;
+      if (angleInDegrees >= 360){
+        angleInDegrees = 0;
+      }
 
-    //   if (scale[0] <= -1){
-    //    turn = true;
-    //   }
-    //   if (scale[0] >= 1){
-    //     turn = false;
-    //   }
+      if (scale[0] <= -1){
+       turn = true;
+      }
+      if (scale[0] >= 1){
+        turn = false;
+      }
 
-    //   if (turn){
-    //     scale[0] += 0.05;
-    //     //scale[1] += 0.02;
-    //   } else {
-    //     scale[0] -= 0.05;
-    //     //scale[1] -= 0.02;
-    //   }
+      if (turn){
+        scale[0] += 0.05;
+        //scale[1] += 0.02;
+      } else {
+        scale[0] -= 0.05;
+        //scale[1] -= 0.02;
+      }
 
-    //   requestAnimationFrame(drawScene);
-    // }
+      requestAnimationFrame(drawScene);
+    }
 
   }
 }
